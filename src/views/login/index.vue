@@ -84,8 +84,13 @@ export default {
             data: this.loginFrom
           }).then(result => {
             window.localStorage.setItem('user-token', result.data.data.token)
-          }).catch(error => {
-            console.log(error.message)
+            // 编程式导航
+            this.$router.push('/')
+          }).catch(() => {
+            this.$message({
+              message: '手机号或者验证码错误',
+              type: 'warning'
+            })
           })
         }
       })
