@@ -76,9 +76,17 @@ export default {
   methods: {
     login () {
       // validate是一个方法，传入的是一个回调函数
-      this.$refs.myForm.validate(function (isOk) {
+      this.$refs.myForm.validate((isOk) => {
         if (isOk) {
-          console.log('校验成功')
+          this.$axios({
+            method: 'post',
+            url: '/authorizations',
+            data: this.loginFrom
+          }).then(result => {
+            window.localStorage.setItem('user-token', result.data.data.token)
+          }).catch(error => {
+            console.log(error.message)
+          })
         }
       })
     }
