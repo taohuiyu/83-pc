@@ -43,7 +43,7 @@ export default {
     //     // 不正确 没有勾选协议
     //     callBack(new Error('您必须无条件被我们蒙骗'))
     //   }
-      value ? callBack() : callBack(new Error('您必须无条件被我们蒙骗'))
+      value ? callBack() : callBack(new Error('请您选择是否同意'))
     }
     return {
       // 表单数据
