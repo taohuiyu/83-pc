@@ -49,6 +49,8 @@ export default {
     commandClick (key) {
       if (key === 'account') {
         // 账户信息
+        // 跳转到账户信息
+        this.$router.push('/home/account')
       } else if (key === 'git') {
         // 去项目git 地址
         window.location.href = 'https://github.com/taohuiyu/83-pc.git'
