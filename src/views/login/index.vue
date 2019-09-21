@@ -83,7 +83,7 @@ export default {
             url: '/authorizations',
             data: this.loginFrom
           }).then(result => {
-            window.localStorage.setItem('user-token', result.data.data.token)
+            window.localStorage.setItem('user-token', result.data.token)
             // 编程式导航
             this.$router.push('/')
           }).catch(() => {

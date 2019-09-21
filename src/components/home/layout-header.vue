@@ -43,7 +43,7 @@ export default {
         // headers: { 'Authorization': `Bearer ${token}` } // 请求参数
         url: '/user/profile'
       }).then(result => {
-        this.userInfo = result.data.data// 接收数据对象
+        this.userInfo = result.data// 接收数据对象
       })
     },
     // 公共点击事件
