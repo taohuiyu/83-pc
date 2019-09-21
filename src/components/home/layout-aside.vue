@@ -7,9 +7,7 @@
     <!-- ：router="true" 和 router-->
     <el-menu
       router
-      default-active="2"
-      @open="handleOpen"
-      @close="handleClose"
+
       style="width:201px"
       background-color="#353b4e"
       text-color="#adafb5"
