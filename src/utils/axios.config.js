@@ -2,7 +2,12 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import router from '../permission' // 导入一个实例  为什么不能用this.$router 原来的this指的是vue实例
+import jsonBig from 'json-bigint'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 将地址的常态值设置给baseUrl
+axios.defaults.transformResponse = [function (data) {
+  return jsonBig.parse(data)
+}]
+
 // 请求拦截  请求到达后台之前拦截
 axios.interceptors.request.use(function (config) {
   // 在发起请求请做一些业务处理

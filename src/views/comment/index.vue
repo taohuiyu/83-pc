@@ -17,7 +17,7 @@
            <template slot-scope="obj">
               <!-- 自定义内容，获取其他列的数据 -->
            <el-button size="small" type="text">修改</el-button>
-           <el-button @click="closeOrOpen(obj.row)" size="small" type="text">{{obj.row.comment_status?"关闭评论":"打开评论"}}</el-button></template>
+           <el-button :style="{color:obj.row.comment_status?'#E6A23C':'#409EFF'}" @click="closeOrOpen(obj.row)" size="small" type="text">{{obj.row.comment_status?"关闭评论":"打开评论"}}</el-button></template>
         </el-table-column>
      </el-table>
   </el-card>
@@ -51,7 +51,7 @@ export default {
         // 确定就要掉接口
         this.$axios({
           url: 'comments/status',
-          params: { article_id: row.id }, // 路径参数
+          params: { article_id: row.id.toString() }, // 路径参数
           data: { allow_comment: !row.comment_status },
           method: 'put'
         }).then(() => {
