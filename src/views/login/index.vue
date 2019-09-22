@@ -7,7 +7,7 @@
               <img src="../../assets/img/logo_index.png" alt="">
           </div>
           <!-- 表单都是由 el-form包裹-->
-          <el-form :model="loginFrom" :rules="loginRules"     style="margin-top:20px" ref="myForm">
+          <el-form :model="loginFrom" :rules="loginRules"     style="margin-top:20px" ref="myForm" status-icon>
               <el-form-item prop="mobile">
                   <!-- 手机号 -绑定v-model- > -->
                   <el-input v-model="loginFrom.mobile" placeholder="请输入手机号"></el-input>
