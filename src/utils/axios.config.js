@@ -1,7 +1,7 @@
 // 负责对axios进行处理
 import axios from 'axios'
 import { Message } from 'element-ui'
-import router from '../permission'
+import router from '../permission' // 导入一个实例  为什么不能用this.$router 原来的this指的是vue实例
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 将地址的常态值设置给baseUrl
 // 请求拦截  请求到达后台之前拦截
 axios.interceptors.request.use(function (config) {
@@ -20,7 +20,7 @@ axios.interceptors.response.use(function (response) {
   return response.data ? response.data : {}
 }, function (error) {
   // 执行失败时执行
-  let status = error.response.status// 获取失败状态码
+  let status = error.response.status // 获取失败的状态码
   let message = '未知错误'
   switch (status) {
     case 400:
@@ -44,8 +44,9 @@ axios.interceptors.response.use(function (response) {
       break
   }
   Message({ message })
-  // 希望在异常处理函数中将所有的错误都处理完毕，不再进入catch 终止错误
-  return new Promise(function () {})
+  Message({ message, type: 'warning' })
+  //   希望 在异常处理函数中将所有的错误都处理完毕 不再进入catch  终止错误
+  return new Promise(function () {}) // 终止当前的错误
 })
 export default axios // 第一种方式
 // export default {
