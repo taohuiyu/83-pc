@@ -1,11 +1,11 @@
 <template>
-  <el-card>
+  <el-card v-loading='lodaing'>
      <bread-crumb slot="header">
       <!-- title具名 是面包屑组件的具名 -->
       <template slot="title">素材管理</template>
     </bread-crumb>
     <!-- http-request 自定义上传 -->
-    <el-upload :show-file-list="false" :http-request="uploadImg" action="" class='too-difficult'>
+    <el-upload :show-file-list="false" :http-request="uploadImg" action="" class="too-difficult">
         <el-button type='primary'>我太难了(上传)</el-button>
     </el-upload>
     <!-- el-tabs => el-tab-pane -->
@@ -16,8 +16,10 @@
           <el-card class="img-item" v-for="item in list" :key="item.id">
             <img :src="item.url" alt />
             <div class="operate">
-              <i :style="{color: item.is_collected ? 'red' : '#000'}" class="el-icon-star-on"></i>
-              <i class="el-icon-delete-solid"></i>
+              <!-- 收藏 -->
+              <i @click="collectOrCancel(item)" :style="{color: item.is_collected ? 'red' : '#000'}" class="el-icon-star-on"></i>
+              <!-- 删除事件 -->
+              <i @click="deiImg(item.id)" class="el-icon-delete-solid"></i>
             </div>
           </el-card>
         </div>
@@ -55,10 +57,38 @@ export default {
         total: 0,
         currentPage: 1,
         pageSize: 10
-      }
+      },
+      lodaing: false
     }
   },
   methods: {
+    // 收藏还反收藏
+    collectOrCancel (item) {
+      // 提示一下
+      let mess = item.is_collected ? '取消' : ''
+      this.$confirm(`您确定要${mess}收藏该图片吗？`).then(() => {
+        this.$axios({
+          url: `/user/images/${item.id}`,
+          method: 'put',
+          data: { collect: !item.is_collected }
+        }).then(() => {
+          this.getMaterial()
+        })
+      })
+    },
+    // 删除图片的方法
+    deiImg (id) {
+      // 删除之前询问一下是否要删除,返回一个promise对象
+      this.$confirm('您确定要删除该图片吗？').then(() => {
+        // 如果确定删除
+        this.$axios({
+          url: `/user/images/${id}`,
+          method: 'delete'
+        }).then(() => {
+          this.getMaterial()
+        })
+      })
+    },
     //   上传方法
     uploadImg (params) {
       const data = new FormData() // 声明一个新的表单
@@ -85,6 +115,7 @@ export default {
     },
     //   获取素材列表
     getMaterial () {
+      this.lodaing = true
       // this.activeName === 'collect' 相当于去找收藏的数据
       // 如果不等于collect 相等于去找全部的数据
       this.$axios({
@@ -93,6 +124,7 @@ export default {
       }).then(result => {
         this.list = result.data.results
         this.page.total = result.data.total_count // 赋值总数  每次总条数都会重新赋值
+        this.lodaing = false
       })
     }
   },
@@ -103,39 +135,41 @@ export default {
 </script>
 
 <style lang='less' scoped>
+
 .too-difficult{
-     position: absolute;
+    position: absolute;
     right:20px;
     margin-top:-10px;
+    z-index: 1
 }
 .img-list {
     display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  .img-item {
-    width: 180px;
-    height: 180px;
-    border-radius: 6px;
-    margin: 30px;
-    position: relative;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-    .operate {
-      background-color: #f4f5f6;
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 30px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      i {
-        font-size: 18px;
-      }
-    }
-  }
+    flex-wrap: wrap;
+    justify-content: center;
+   .img-item {
+       width: 180px;
+       height: 180px;
+       border-radius: 6px;
+       margin:30px;
+       position: relative;
+       img {
+           width:100%;
+           height:100%;
+       }
+       .operate {
+           background-color: #f4f5f6;
+           position: absolute;
+           left:0;
+           bottom:0;
+           width: 100%;
+           height:30px;
+           display: flex;
+           justify-content: space-around;
+           align-items: center;
+           i {
+               font-size:18px;
+           }
+       }
+   }
 }
 </style>
