@@ -6,22 +6,25 @@
     <el-form style="margin-left:50px">
       <!-- 文章状态 -->
       <el-form-item label="文章状态 :">
-        <el-radio-group>
-          <el-radio>全部</el-radio>
-          <el-radio>草稿</el-radio>
-          <el-radio>待审核</el-radio>
-          <el-radio>审核通过</el-radio>
-          <el-radio>审核失败</el-radio>
+        <el-radio-group @change=" changeCondition " v-model="formData.status">
+          <el-radio :label="5">全部</el-radio>
+          <el-radio :label="0">草稿</el-radio>
+          <el-radio :label="1">待审核</el-radio>
+          <el-radio :label="2">审核通过</el-radio>
+          <el-radio :label="3">审核失败</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- 频道列表 -->
       <el-form-item label="频道列表 :">
-        <el-select></el-select>
+        <el-select @change="changeCondition" v-model="formData.channel_id">
+            <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
       </el-form-item>
       <!-- 时间 -->
       <el-form-item label="时间选择 ：">
-        <el-date-picker
+        <el-date-picker @change="changeCondition" v-model="formData.date"
           type="daterange"
+          value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         ></el-date-picker>
@@ -57,22 +60,50 @@
 export default {
   data () {
     return {
+      formData: {
+        status: 5,
+        channels_id: null, // 频道Id
+        date: []
+      },
       list: [],
-      defaultImg: require('../../assets/img/default.gif')
+      defaultImg: require('../../assets/img/default.gif'), // 将图片地址转成base64
+      channels: []
     }
   },
   methods: {
+    // 状态事件变化
+    changeCondition () {
+      // 组装请求参数
+      let params = {
+        // 如果状态是5，那就是全部，但是接口要求全部时，不传内容，所以就是null
+        status: this.formData.status === 5 ? null : this.formData.status,
+        channel_id: this.formData.channel_id,
+        begin_pubdate: this.formData.date.length ? this.formData.date[0] : null,
+        end_pubdate: this.formData.date.length > 1 ? this.formData.date[1] : null// 结束时间
+      }
+      this.getArticles(params)
+    },
     // 请求数据，获取文章列表
-    getArticles () {
+    getArticles (params) {
       this.$axios({
-        url: '/articles'
+        url: '/articles',
+        params
       }).then(result => {
         this.list = result.data.results // 获取文章列表
+      })
+    },
+    // 获取频道列表
+    getChannels () {
+      this.$axios({
+        url: '/channels'
+      }).then(result => {
+        this.channels = result.data.channels
       })
     }
   },
   created () {
-    this.getArticles()
+    this.getArticles()// 获取文章
+    this.getChannels()// 获取频道列表
   },
   filters: {
     // 定义一个过滤器，处理现实文本
