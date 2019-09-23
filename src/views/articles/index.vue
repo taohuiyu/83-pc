@@ -21,7 +21,6 @@
       <!-- 时间 -->
       <el-form-item label="时间选择 ：">
         <el-date-picker
-          v-model="value1"
           type="daterange"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -33,11 +32,12 @@
     <div class="article-item" v-for="(item,index) in list" :key="index">
       <!-- 左侧 -->
       <div class="left">
-        <img src="../../assets/img/404.png" alt />
+        <img :src="item.cover.images.length ? item.cover.images[0]:defaultImg" alt />
         <div class="info">
-          <span class="title">十一国庆放假</span>
-          <el-tag class="status">已发表</el-tag>
-          <span class="date">2019-09-23 11:21:21</span>
+          <span class="title">{{item.title}}</span>
+          <!-- 插值表达式，使用过滤器 -->
+          <el-tag :type="item.status | statusType" class="status">{{item.status | statusText}}</el-tag>
+          <span class="date">{{item.pubdate}}</span>
         </div>
       </div>
       <!-- 右侧 -->
@@ -57,7 +57,55 @@
 export default {
   data () {
     return {
-      list: [1, 2, 3, 4]
+      list: [],
+      defaultImg: require('../../assets/img/default.gif')
+    }
+  },
+  methods: {
+    // 请求数据，获取文章列表
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(result => {
+        this.list = result.data.results // 获取文章列表
+      })
+    }
+  },
+  created () {
+    this.getArticles()
+  },
+  filters: {
+    // 定义一个过滤器，处理现实文本
+    // 过滤器的第一个参数，永远是前面传过来的值
+    // 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除
+    statusText (value) {
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 1:
+          return '待审核'
+        case 2:
+          return '已发表'
+        case 3:
+          return '审核失败'
+        case 4:
+          return '已删除'
+      }
+    },
+    // 处理状态的样式
+    statusType (value) {
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 1:
+          return 'info'
+        case 2:
+          return 'success'
+        case 3:
+          return 'danger'
+        case 4:
+          return 'danger'
+      }
     }
   }
 }
