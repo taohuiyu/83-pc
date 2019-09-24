@@ -25,8 +25,8 @@
              </el-select>
           </el-form-item>
           <el-form-item>
-             <el-button type="primary" @click="publish">发布文章</el-button>
-             <el-button>存入草稿</el-button>
+             <el-button type="primary" @click="publish(false)">发布文章</el-button>
+             <el-button @click="publish(true)">存入草稿</el-button>
           </el-form-item>
        </el-form>
    </el-card>
@@ -48,7 +48,8 @@ export default {
       },
       // 发布规则
       publishRules: {
-        title: [{ required: true, message: '标题不能为空' }],
+        title: [{ required: true, message: '标题不能为空' },
+          { min: 5, max: 30, message: '标题长度在5-30个字符' }],
         content: [{ required: true, message: '内容不能为空' }],
         channel_id: [{ required: true, message: '频道不能为空' }]
       }
@@ -64,9 +65,18 @@ export default {
       })
     },
     // 发布文章 validate
-    publish () {
+    publish (draft) {
       this.$refs.publishForm.validate((isOk) => {
         if (isOk) {
+          this.$axios({
+            url: '/articles',
+            method: 'post',
+            params: { draft }, // draft为true为草稿，为false是发布文章
+            data: this.formData
+          }).then(() => {
+            // 发布成功，回到内容列表
+            this.$router.push('/home/articles')
+          })
         }
       })
     }
