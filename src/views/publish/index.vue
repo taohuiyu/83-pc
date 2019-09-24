@@ -4,28 +4,28 @@
           <template slot='title'>发布文章</template>
        </bread-crumb>
        <!-- 表单 -->
-       <el-form style="margin-left:100px" label-width="100px">
-          <el-form-item label="标题">
-             <el-input style="width:400px"></el-input>
+       <el-form ref="publishForm" :model="formData" :rules="publishRules" style="margin-left:100px" label-width="100px">
+          <el-form-item prop="title" label="标题">
+             <el-input v-model="formData.title" style="width:400px"></el-input>
           </el-form-item>
-          <el-form-item label="内容">
-             <el-input type="textarea" :rows="4" placeholder="请输入内容"></el-input>
+          <el-form-item prop="content" label="内容">
+             <el-input v-model="formData.content" type="textarea" :rows="4" placeholder="请输入内容"></el-input>
           </el-form-item>
-          <el-form-item label="封面">
-             <el-radio-group>
-                <el-radio>单图</el-radio>
-                <el-radio>三图</el-radio>
-                <el-radio>无图</el-radio>
-                <el-radio>自动</el-radio>
+          <el-form-item prop="cover" label="封面">
+             <el-radio-group v-model="formData.cover.type">
+                <el-radio :label="1">单图</el-radio>
+                <el-radio :label="3">三图</el-radio>
+                <el-radio :label="0">无图</el-radio>
+                <el-radio :label="-1">自动</el-radio>
              </el-radio-group>
           </el-form-item>
-          <el-form-item label="频道">
-             <el-select>
+          <el-form-item prop="channel_id" label="频道">
+             <el-select v-model="formData.channel_id">
                 <el-option v-for="item in channels" :key="item.id" :value="item.id" :label="item.name"></el-option>
              </el-select>
           </el-form-item>
           <el-form-item>
-             <el-button type="primary">发布文章</el-button>
+             <el-button type="primary" @click="publish">发布文章</el-button>
              <el-button>存入草稿</el-button>
           </el-form-item>
        </el-form>
@@ -36,16 +36,38 @@
 export default {
   data () {
     return {
-      channels: []
+      channels: [],
+      formData: {
+        title: '', // 标题
+        content: '', // n内容
+        channels_id: null, // 频道
+        cover: {
+          type: 0,
+          images: []
+        }// 封面
+      },
+      // 发布规则
+      publishRules: {
+        title: [{ required: true, message: '标题不能为空' }],
+        content: [{ required: true, message: '内容不能为空' }],
+        channel_id: [{ required: true, message: '频道不能为空' }]
+      }
     }
   },
   methods: {
-    // 获取频道数据
+    //   获取频道数据
     getChannels () {
       this.$axios({
         url: '/channels'
       }).then(result => {
-        this.channels = result.data.channels// 获取channels频道
+        this.channels = result.data.channels // 获取channels频道
+      })
+    },
+    // 发布文章 validate
+    publish () {
+      this.$refs.publishForm.validate((isOk) => {
+        if (isOk) {
+        }
       })
     }
   },
