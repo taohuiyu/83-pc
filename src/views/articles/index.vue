@@ -47,9 +47,7 @@
       </div>
       <!-- 右侧 -->
       <div class="right">
-        <span>
-          <i class="el-icon-edit"></i>修改
-        </span>
+        <span @click="goEdit(item.id)"><i class="el-icon-edit"></i>修改</span>
         <span @click=" delArticles(item.id)">
           <i class="el-icon-delete"></i>删除
         </span>
@@ -89,6 +87,11 @@ export default {
     }
   },
   methods: {
+    // 修改获取id
+    goEdit (id) {
+      // 动态路由传参，由于id 是bignumber类型，需要toString转成字符串
+      this.$router.push(`/home/publish/${id.toString()}`)
+    },
     // 删除事件
     delArticles (id) {
       this.$confirm('您确定要删除此文章吗？').then(() => {
