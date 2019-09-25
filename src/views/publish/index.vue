@@ -12,7 +12,7 @@
              <quill-editor v-model="formData.content" style="height:600px"></quill-editor>
           </el-form-item>
           <el-form-item prop="cover" label="封面" style="margin-top:120px">
-             <el-radio-group v-model="formData.cover.type">
+             <el-radio-group v-model="formData.cover.type" @change="changeType">
                 <el-radio :label="1">单图</el-radio>
                 <el-radio :label="3">三图</el-radio>
                 <el-radio :label="0">无图</el-radio>
@@ -44,7 +44,11 @@ export default {
         cover: {
           type: 0,
           images: []
-        }// 封面
+        }// 封面 封面类型 -1:自动，0-无图，1-1张，3-3张
+        // type == 0 => images => []
+        // type==1 =>images=> [一个字符串] =》 字符串是封面的图片地址
+        // type==3 => images => [3个字符串] =》 字符串是封面的图片地址
+        // type==-1 => images => [可有可无] =》 归为无
       },
       // 发布规则
       publishRules: {
@@ -56,6 +60,18 @@ export default {
     }
   },
   methods: {
+    // 封面类型改变事件
+    changeType () {
+      // 根据type进行images的长度变化
+      // 可以获取最新的type
+      if (this.formData.cover.type === 1) {
+        this.formData.cover.images = ['']// images的长度为1
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', '']// images的长度为3
+      } else {
+        this.formData.cover.images = []
+      }
+    },
     //   获取频道数据
     getChannels () {
       this.$axios({
