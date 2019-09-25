@@ -41,11 +41,11 @@ export default {
 <style lang="less" scoped>
     .cover-image {
     display: flex;
-    margin:10px 0;
+    margin:20px 0;
     margin-left:100px;
     .cover-item {
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 20px;
         width: 220px;
         height: 220px;
         img{
