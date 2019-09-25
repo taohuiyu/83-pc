@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
        <bread-crumb slot='header'>
           <template slot='title'>发布文章</template>
        </bread-crumb>
@@ -9,7 +9,7 @@
              <el-input v-model="formData.title" style="width:400px"></el-input>
           </el-form-item>
           <el-form-item prop="content" label="内容">
-             <quill-editor v-model="formData.content" style="height:600px"></quill-editor>
+             <quill-editor v-model="formData.content" style="height:400px"></quill-editor>
           </el-form-item>
           <el-form-item prop="cover" label="封面" style="margin-top:120px">
              <el-radio-group v-model="formData.cover.type" @change="changeType">
@@ -20,7 +20,7 @@
              </el-radio-group>
           </el-form-item>
            <!-- 封面组件 传递父组件的images到子组件 父传子-->
-          <cover-image :images="formData.cover.images"></cover-image>
+          <cover-image @selectImg="changeImg" :images="formData.cover.images"></cover-image>
           <el-form-item prop="channel_id" label="频道">
              <el-select v-model="formData.channel_id">
                 <el-option v-for="item in channels" :key="item.id" :value="item.id" :label="item.name"></el-option>
@@ -39,6 +39,7 @@ export default {
   data () {
     return {
       channels: [],
+      loading: false,
       formData: {
         title: '', // 标题
         content: '', // n内容
@@ -62,6 +63,20 @@ export default {
     }
   },
   methods: {
+    // 接收子组件传过来得数据 更改images [""] ["","",""] []
+    changeImg (url, index) {
+      //    this.formData.cover.images[index] = url // 错误
+      // Vue 更新原理 this.a = "zhangsan"  this.list[index] =  值 错误的
+      // this.formData.cover.images = this.formData.cover.images.map(function (item, i) {
+      //   if (index === i) {
+      //     // 说明找到了要修改的值吧
+      //     return url
+      //   }
+      //   return item
+      // })
+      // this.formData.cover.images.splice(index, 1, url) // 直接替换 只适用于字符串数组的情况
+      this.formData.cover.images = this.formData.cover.images.map((item, i) => i === index ? url : item)
+    },
     // 封面类型改变事件
     changeType () {
       // 根据type进行images的长度变化
@@ -84,10 +99,12 @@ export default {
     },
     // 根据文章id获取文章详情
     getArticleById (articleId) {
+      this.loading = true
       this.$axios({
         url: `/articles/${articleId}`
       }).then(result => {
         this.formData = result.data
+        this.loading = false
       })
     },
     // 发布文章 validate
