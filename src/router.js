@@ -11,6 +11,9 @@ export default new Router({
     {
       path: '/',
       redirect: '/home'
+    }, {
+      path: '*',
+      component: () => import('./views/404')
     },
     {
       path: '/home',
