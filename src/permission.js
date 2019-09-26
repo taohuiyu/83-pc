@@ -1,6 +1,11 @@
 // 权限
 import router from './router'
+// 引入进度条模块
+import nprogress from 'nprogress'
+import 'nprogress/nprogress.css' // 引入css
 router.beforeEach(function (to, from, next) {
+  // 开启进度条
+  nprogress.start()
   // 判断拦截的范围
   if (to.path.startsWith('/home')) {
     let token = window.localStorage.getItem('user-token')// 获取token
@@ -15,6 +20,11 @@ router.beforeEach(function (to, from, next) {
   } else {
     next()// 放行
   }
+})
+// 全局后置守卫
+router.afterEach(function () {
+  // 关闭进度条
+  nprogress.done()
 })
 // 先导出
 export default router
