@@ -2,10 +2,12 @@
 import layoutAside from '../components/home/layout-aside'
 import layoutHeader from '../components/home/layout-header'
 import breadCrumb from './common/bread-crumb'
+
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
+
 import coverImg from './publish/cover-image'
 import selectImg from './publish/select-image.vue'
 export default {
